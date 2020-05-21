@@ -5,8 +5,8 @@ PI = math.pi
 
 def fft(A, invert):
     """
-    Entrada: Un arreglo A de numeros (tanto R como C funciona), invert un booleano que me indica si necesito la fft o l fft inversa
-    Salida: Dependiendo de invert retorno la fft o la fft inversa de A
+    Entrada: Un arreglo A de coeficiente, invert un booleano que me indica si necesito calcular la DFT o la DFT inversa
+    Salida: Dependiendo de invert retorno la DFT o la DFT inversa de A
     """
     n = len(A)
     if n == 1:
@@ -31,19 +31,22 @@ def fft(A, invert):
         if invert: #Para la interpolacion
             A[i] /= 2
             A[i+int(n/2)] /= 2
+            #Ya que esto se hace en cada iteracion, esto terminará dividiendo los valores finales por n.
         w *= wn
 
 def multiply(a, b):
     """
-    Entrada:
-    Salida:
+    Entrada: Un arreglo A y un arreglo B, dichos arreglos son de coeficientes que representan los polinomios
+    Salida: La multiplicacion de A y B, usando la propiedad A * B = InverseDFT(DFT(A) * DFT(B))
     """
     ans = []
     fa = [complex(a[i], 0) for i in range(len(a))]
     fb = [complex(b[i], 0) for i in range(len(a))]
+
     n = 1
     while n < len(a) + len(b):
         n *= 2
+    print(n)
     for i in range(len(fa), n):
         fa.append(complex(0, 0))
         fb.append(complex(0, 0))
@@ -56,7 +59,7 @@ def multiply(a, b):
     for i in range(n):
         ans.append(fa[i] * fb[i])
 
-    #vuelvo a la representacion de polinomio
+    #vuelvo a la representacion de coeficientes
     fft(ans, True)
 
     ans2 = []
@@ -75,7 +78,7 @@ def main():
         ta.append(0)
         tb.append(B[i])
 
-    C = multiply(ta, tb)
+    C = multiply(A, B)
     aux = []
     m = len(A)
     for i in range(m-1, 2*m-1):

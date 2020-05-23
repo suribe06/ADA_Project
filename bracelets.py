@@ -1,3 +1,4 @@
+from sys import stdin
 import math
 import cmath
 
@@ -5,7 +6,7 @@ PI = math.pi
 
 def fft(A, invert):
     """
-    Entrada: Un arreglo A de coeficiente, invert un booleano que me indica si necesito calcular la DFT o la DFT inversa
+    Entrada: Un arreglo A de coeficientes, invert un booleano que me indica si necesito calcular la DFT o la DFT inversa
     Salida: Dependiendo de invert retorno la DFT o la DFT inversa de A
     """
     n = len(A)
@@ -39,7 +40,7 @@ def multiply(a, b):
     Entrada: Un arreglo A y un arreglo B, dichos arreglos son de coeficientes que representan los polinomios
     Salida: La multiplicacion de A y B, usando la propiedad A * B = InverseDFT(DFT(A) * DFT(B))
     """
-    ans = []
+    c, ans = [], []
     fa = [complex(a[i], 0) for i in range(len(a))]
     fb = [complex(b[i], 0) for i in range(len(a))]
 
@@ -57,21 +58,39 @@ def multiply(a, b):
 
     #multiplicar en punto valor con coste O(n)
     for i in range(n):
-        ans.append(fa[i] * fb[i])
+        c.append(fa[i] * fb[i])
 
     #vuelvo a la representacion de coeficientes
-    fft(ans, True)
+    fft(c, True)
 
-    ans2 = []
     for i in range(n):
-        ans2.append(round(ans[i].real))
+        ans.append(round(c[i].real))
 
-    return ans2
+    return ans
+
+def solve(A, B):
+    ans = 0
+    ta = A[::-1]
+    tb = B
+    for i in range(len(A)):
+        ta.append(0)
+        tb.append(B[i])
+
+    C = multiply(ta, tb)
+    m = len(A)
+    for i in range(m-1, 2*m-1):
+        if C[i] == 0:
+            ans += 1
+    return ans
 
 def main():
-    A = [-1, 3, 5, 10]
-    B = [3, 5, 1, -2]
-    C = multiply(A, B)
-    print(C)
+    line = stdin.readline()
+    while len(line) != 0:
+        n = int(line)
+        b1 = [0 if x == 'B' else 1 for x in stdin.readline().strip()]
+        b2 = [0 if x == 'B' else 1 for x in stdin.readline().strip()]
+        ans = solve(b1, b2)
+        print(ans)
+        line = stdin.readline()
 
 main()

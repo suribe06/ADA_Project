@@ -1,3 +1,10 @@
+#Codigo realizado por Santiago Uribe Pastas identificado con el codigo de estudiante 8925546
+"""
+Código de honor:
+Como miembro de la comunidad académica de la Pontificia Universidad Javeriana Cali me comprometo
+a seguir los más altos estándares de integridad académica.
+"""
+
 from sys import stdin
 import math
 import cmath
@@ -13,8 +20,8 @@ def fft(A, invert):
     if n == 1:
         return
 
-    Aeven, Aodd = [], []
     #Separo indices pares e impares
+    Aeven, Aodd = [], []
     for i in range(int(n/2)):
         Aeven.append(A[2*i])
         Aodd.append(A[2*i+1])
@@ -22,11 +29,12 @@ def fft(A, invert):
     fft(Aeven, invert)
     fft(Aodd, invert)
 
-    #Diagrama mariposa
+    #Calculo de la DFT
     angle = 2 * PI / n * (-1 if invert else 1)
     w = complex(1,0)
     wn = complex(math.cos(angle), math.sin(angle))
     for i in range(int(n/2)):
+        #Diagrama mariposa
         A[i] = Aeven[i] + w * Aodd[i]
         A[i + int(n/2)] = Aeven[i] - w * Aodd[i]
         if invert: #Para la interpolacion
@@ -37,7 +45,8 @@ def fft(A, invert):
 
 def multiply(a, b):
     """
-    Entrada: Un arreglo A y un arreglo B, dichos arreglos son de coeficientes que representan los polinomios
+    Entrada: Un arreglo A y un arreglo B, dichos arreglos contienen los coeficientes de los polinomios (representacion de A y B
+    como un arreglo de coeficientes)
     Salida: La multiplicacion de A y B, usando la propiedad A * B = InverseDFT(DFT(A) * DFT(B))
     """
     c, ans = [], []
@@ -47,7 +56,6 @@ def multiply(a, b):
     n = 1
     while n < len(a) + len(b):
         n *= 2
-
     for i in range(len(fa), n):
         fa.append(complex(0, 0))
         fb.append(complex(0, 0))
@@ -60,9 +68,8 @@ def multiply(a, b):
     for i in range(n):
         c.append(fa[i] * fb[i])
 
-    #vuelvo a la representacion de coeficientes
+    #volver a la representacion de coeficientes
     fft(c, True)
-
     for i in range(n):
         ans.append(round(c[i].real))
 
@@ -70,7 +77,7 @@ def multiply(a, b):
 
 def solve(A, B):
     ans = 0
-    ta = A[::-1]
+    ta = A[::-1] #Invertimos para el calculo de la convolucion
     tb = B
     for i in range(len(A)):
         ta.append(0)
